@@ -1,5 +1,7 @@
 from entities import Vertex, Edge
 from query import Query
+
+
 class Graph():
 
     def __init__(self):
@@ -45,6 +47,6 @@ class Graph():
         self.edges.append(edge)
 
     def v(self, *args):
-        q = Query()
+        q = Query(self)
         q.add('vertex', args)
         return q
