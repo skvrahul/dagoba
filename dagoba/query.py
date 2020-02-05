@@ -1,6 +1,5 @@
 Pipetypes = {}
 class Query():
-    Q = {}
     def __init__(self, graph):
         self.graph = graph
         self.state = []
@@ -13,6 +12,7 @@ class Query():
 
     def addPipetype(self, name, func):
         Pipetypes[name] = func
-        Q[name] = lambda 
-
+        def f():
+            return self.add(name, func)
+        Q[name] = f
 

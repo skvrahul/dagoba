@@ -1,7 +1,7 @@
 import sys
-from graph import Graph
-from query import Query
-from entities import Edge, Vertex
+from dagoba.graph import Graph
+from dagoba.query import Query
+from dagoba.entities import Edge, Vertex
 
 
 class Person(Vertex):
@@ -19,6 +19,38 @@ class Relationship(Edge):
         self.name = name
         self._in = src._id
         self._out = target._id
+
+
+class Dagoba:
+    # Map of available pipetypes
+    Pipetypes = {}
+
+    def getFauxPipetype():
+        def _pipe(_, __, maybe_gremlin):
+            return maybe_gremlin or 'pull'
+        return _pipe
+
+    def error(msg):
+        print('Dagoba Error: ', msg)
+
+    def addPipetype(name, func):
+        def _func(self, name, *args):
+            return self.add(pipetype=name, *args)
+
+        # Adding the pipe function dynamically to the Query class
+        # to allow this function to be invoked on Query objects
+        setattr(Query, name, _func)
+
+    def getPipetype(name):
+        if name in Dagoba.Pipetypes:
+            return Dagoba.Pipetypes
+        else:
+            Dagoba.error("Unrecognized pipe name")
+            return Dagoba.getFauxPipetype
+
+    '''
+        Static code to create pipes
+    '''
 
 
 def main(args):

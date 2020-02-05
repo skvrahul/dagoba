@@ -1,5 +1,5 @@
-from entities import Vertex, Edge
-from query import Query
+from .entities import Vertex, Edge
+from .query import Query
 
 
 class Graph():
