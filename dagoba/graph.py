@@ -1,5 +1,6 @@
-from .entities import Vertex, Edge
-from .query import Query
+from entities import Vertex, Edge
+from query import Query
+from typing import Dict, List
 
 
 class Graph():
@@ -16,6 +17,28 @@ class Graph():
         else:
             return None
 
+    def _searchVertices(self, query: Dict):
+        return list(filter(lambda v: v.match(query), self.vertices))
+
+    def _findVerticesByIDs(self, ids: List[int]):
+        if len(ids) == 1:
+            v = self.findVertexByID(ID=ids[0]) 
+            if v:
+                return [v]
+            else:
+                return []
+        else:
+            verts = map(lambda i: self.findVertexByID(ID=i))
+            return list(filter(lambda v: v is not None, verts))
+    
+    def findVertices(self, args):
+        if isinstance(args[0], dict):
+            return self._searchVertices(args[0])
+        elif len(args) == 0:
+            return self.vertices[:]
+        else:
+            return self._findVerticesByIDs(args)
+     
     def addVertex(self, vertex: Vertex):
         if not vertex._id:
             vertex._id = self.autoID
