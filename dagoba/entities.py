@@ -67,6 +67,9 @@ class Args:
             else:
                 return self.args[index]
 
+    def __repr__(self):
+        return '<Args: %s>' % self.args
+
 
 class Gremlin:
 
