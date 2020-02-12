@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List, Tuple
 
 
 class Vertex():
@@ -38,6 +38,34 @@ class State:
         self.edges = None
         self.gremlin = None
         self.num_taken = 0
+
+
+class Args:
+
+    def __init__(self, args: List = None):
+        if args:
+            self.args = args
+        else:
+            self.args = []
+
+    @classmethod
+    def from_tuple(cls, args: Tuple):
+        list_args = []
+        for a in args:
+            list_args.append(a)
+        return Args(args=list_args)
+
+    def is_empty(self):
+        return self.args is None or len(self.args) == 0
+
+    def get(self, index):
+        if self.is_empty():
+            return None
+        else:
+            if index >= len(self.args):
+                return None
+            else:
+                return self.args[index]
 
 
 class Gremlin:

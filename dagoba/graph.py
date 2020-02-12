@@ -1,4 +1,4 @@
-from .entities import Vertex, Edge
+from .entities import Vertex, Edge, Args
 from .query import Query
 from typing import Dict, List
 
@@ -31,12 +31,11 @@ class Graph():
             verts = map(lambda i: self.findVertexByID(ID=i))
             return list(filter(lambda v: v is not None, verts))
 
-    def findVertices(self, *args):
-        print(args)
-        if isinstance(args[0], dict):
-            return self._searchVertices(args[0])
-        elif len(args) == 0:
+    def findVertices(self, args: Args):
+        if args.is_empty():
             return self.vertices[:]
+        elif isinstance(args.args[0], dict):
+            return self._searchVertices(args.args[0])
         else:
             return self._findVerticesByIDs(args)
 
@@ -76,7 +75,8 @@ class Graph():
     def findInEdges(self, vertex):
         return vertex._in
 
-    def v(self, args):
+    def v(self, *args):
+        args = Args.from_tuple(args)
         q = Query(self)
         q.add('vertex', args)
         return q

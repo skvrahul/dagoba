@@ -1,4 +1,4 @@
-from dagoba.entities import State, Gremlin
+from dagoba.entities import State, Gremlin, Args
 
 
 class Query():
@@ -9,7 +9,7 @@ class Query():
         self.program = []
         self.gremlins = []
 
-    def add(self, pipetype, args):
+    def add(self, pipetype, args: Args):
         step = (pipetype, args)
         self.program.append(step)
         return self
@@ -30,16 +30,16 @@ class Query():
         cnt = 0
         while(done < last_step):
             if cnt > 15:
+                print('Exiting')
                 exit()
             cnt += 1
             ts = self.state
             step = self.program[pc]
-            print(step)
+            print('Current Step:', step)
             state = ts or State()
             pipetype = Core.getPipetype(step[0])
             maybe_gremlin = pipetype(self.graph, step[1], maybe_gremlin, state)
             if (maybe_gremlin == 'pull'):
-                print('Pulling from ', step)
                 maybe_gremlin = False
                 if pc - 1 > done:
                     print('Go to prev pipe')
@@ -81,8 +81,9 @@ class Core:
     def addPipetype(cls, name, func):
         Core.Pipetypes[name] = func
 
-        def _func(self, args=None):
-            return self.add(pipetype=name, args=args)
+        def _func(self, *args):
+            args_ob = Args.from_tuple(args=args)
+            return self.add(pipetype=name, args=args_ob)
 
         # Adding the pipe function dynamically to the Query class
         # to allow this function to be invoked on Query objects
@@ -115,10 +116,9 @@ class Core:
     '''
         Defining various standard pipetypes
     '''
-    def _vertex(graph, args, gremlin: Gremlin, state: State):
+    def _vertex(graph, args: Args, gremlin: Gremlin, state: State):
         if not state.vertices:
             state.vertices = graph.findVertices(args)
-        print(state.vertices, 'state.vertices')
 
         if len(state.vertices) == 0:
             return 'done'
@@ -129,15 +129,14 @@ class Core:
         else:
             return Gremlin(vertex, State())
 
-    def _out(graph, args, gremlin, state):
-        print(args)
+    def _out(graph, args: Args, gremlin, state):
         state_has_no_edges = state.edges is None or len(state.edges) == 0
         if not gremlin and state_has_no_edges:
             return 'pull'
 
         if state_has_no_edges:
             state.gremlin = gremlin
-            state.edges = list(filter(Core.filterEdges(args[0]), graph.findOutEdges(gremlin.vertex)))
+            state.edges = list(filter(Core.filterEdges(args.get(0)), graph.findOutEdges(gremlin.vertex)))
 
         if len(state.edges) == 0:
             return 'pull'
@@ -146,14 +145,14 @@ class Core:
         vertex = state.edges.pop()._in
         return Gremlin(vertex, gremlin.state)       # Return a Gremlin sitting on the vertex
 
-    def _in(graph, args, gremlin, state):
+    def _in(graph, args: Args, gremlin, state):
         state_has_no_edges = state.edges is None or len(state.edges) == 0
         if gremlin is None and state_has_no_edges:
             return 'pull'
 
         if state_has_no_edges:
             state.gremlin = gremlin
-            state.edges = graph.findInEdges(gremlin.vertex).filter(Core.filterEdges(args[0]))
+            state.edges = graph.findInEdges(gremlin.vertex).filter(Core.filterEdges(args.get(0)))
 
         if len(state.edges) == 0:
             return 'pull'
@@ -161,18 +160,18 @@ class Core:
         vertex = state.edges.pop()._out
         return Gremlin(vertex, gremlin.state)       # Return a Gremlin sitting on the vertex
 
-    def _property(graph, args, gremlin: Gremlin, state):
+    def _property(graph, args: Args, gremlin: Gremlin, state):
         if not gremlin:
             return 'pull'
-        gremlin.result = gremlin.vertex.getProperty(args[0])
+        gremlin.result = gremlin.vertex.getProperty(args.get(0))
         if gremlin.result:
             return gremlin
         else:
             return False
 
-    def _take(graph, args, gremlin, state):
+    def _take(graph, args: Args, gremlin, state):
         state.num_taken = state.num_taken or 0
-        if state.num_taken == args[0]:
+        if state.num_taken == args.get(0):
             state.num_taken = 0
             return 'done'
 
