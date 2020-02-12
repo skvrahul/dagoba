@@ -39,6 +39,7 @@ class Query():
             state = ts or State()
             pipetype = Core.getPipetype(step[0])
             maybe_gremlin = pipetype(self.graph, step[1], maybe_gremlin, state)
+            print('maybe_gremlin:', maybe_gremlin)
             if (maybe_gremlin == 'pull'):
                 maybe_gremlin = False
                 if pc - 1 > done:
@@ -119,6 +120,7 @@ class Core:
     def _vertex(graph, args: Args, gremlin: Gremlin, state: State):
         if not state.vertices:
             state.vertices = graph.findVertices(args)
+            print('No vertices. Finding....')
 
         if len(state.vertices) == 0:
             return 'done'

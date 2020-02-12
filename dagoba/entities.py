@@ -17,6 +17,9 @@ class Vertex():
         self._in = []
         self._out = []
 
+    def __repr__(self):
+        return '<Vertex: %s>' % self._id
+
 
 class Edge():
 
@@ -81,3 +84,6 @@ class Gremlin:
             self.state = state
 
         self.result = None
+
+    def __repr__(self):
+        return '<Gremlin: vertex:%s, state:%s>' % (self.vertex, self.state)
