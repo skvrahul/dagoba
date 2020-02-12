@@ -1,5 +1,5 @@
-from entities import Vertex, Edge
-from query import Query
+from .entities import Vertex, Edge
+from .query import Query
 from typing import Dict, List
 
 
@@ -18,11 +18,11 @@ class Graph():
             return None
 
     def _searchVertices(self, query: Dict):
-        return list(filter(lambda v: v.match(query), self.vertices))
+        return list(filter(lambda v: v.matches(query), self.vertices))
 
     def _findVerticesByIDs(self, ids: List[int]):
         if len(ids) == 1:
-            v = self.findVertexByID(ID=ids[0]) 
+            v = self.findVertexByID(ID=ids[0])
             if v:
                 return [v]
             else:
@@ -30,15 +30,16 @@ class Graph():
         else:
             verts = map(lambda i: self.findVertexByID(ID=i))
             return list(filter(lambda v: v is not None, verts))
-    
-    def findVertices(self, args):
+
+    def findVertices(self, *args):
+        print(args)
         if isinstance(args[0], dict):
             return self._searchVertices(args[0])
         elif len(args) == 0:
             return self.vertices[:]
         else:
             return self._findVerticesByIDs(args)
-     
+
     def addVertex(self, vertex: Vertex):
         if not vertex._id:
             vertex._id = self.autoID
@@ -69,7 +70,13 @@ class Graph():
         edge._in._in.append(edge)
         self.edges.append(edge)
 
-    def v(self, *args):
+    def findOutEdges(self, vertex):
+        return vertex._out
+
+    def findInEdges(self, vertex):
+        return vertex._in
+
+    def v(self, args):
         q = Query(self)
         q.add('vertex', args)
         return q
