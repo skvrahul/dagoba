@@ -5,7 +5,7 @@ class Query():
 
     def __init__(self, graph):
         self.graph = graph
-        self.state = State()
+        self.state = []
         self.program = []
         self.gremlins = []
 
@@ -33,10 +33,14 @@ class Query():
                 print('Exiting')
                 exit()
             cnt += 1
-            ts = self.state
             step = self.program[pc]
-            print('Current Step:', step)
-            state = ts or State()
+            # Initialize state if needed
+            try:
+                state = self.state[pc]
+            except IndexError:
+                for i in range(len(self.state), pc + 1):
+                    self.state.append(State())
+                state = self.state[pc]
             pipetype = Core.getPipetype(step[0])
             maybe_gremlin = pipetype(self.graph, step[1], maybe_gremlin, state)
             print('maybe_gremlin:', maybe_gremlin)
