@@ -37,20 +37,33 @@ graph = Graph()
 p1 = Person('Bob', 21)
 p2 = Person('Tom', 25)
 p3 = Person('Kate', 22)
+p4 = Person('Alice', 27)
+
 
 graph.addVertex(p1)
 graph.addVertex(p2)
 graph.addVertex(p3)
+graph.addVertex(p4)
 
-graph.addEdge(Relationship('Friends', p1, p3))
-graph.addEdge(Relationship('Friends', p1, p2))
+
+graph.addEdge(Relationship('friend', p1, p3))
+graph.addEdge(Relationship('friend', p1, p2))
+graph.addEdge(Relationship('family', p1, p4))
 ```
 
-Here is an example of how the Graph DB can be queried
+Here are some examples of how the Graph DB can be queried
 *Dagoba* uses chained querying along with lazy execution so each query operator operates on a query and returns another query object. 
 The results are evaluated upon calling **run()**
 
 ```python
-# Print all of Bob's connections
-print(graph.v({'name', 'Bob'}).out())
+# Get all of Bob's connections
+print(graph.v({'name', 'Bob'}).out().run())
+
+# Get all of Bob's friends
+print(graph.v({'name':'Bob'}).out({'name':'friend'}).run())
+
+
+# Get one of Bob's friends
+print(graph.v({'name':'Bob'}).out({'name':'friend'}).take(1).run())
+
 ```
