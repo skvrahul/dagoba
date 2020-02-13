@@ -51,9 +51,9 @@ graph.addEdge(Relationship('friend', p1, p2))
 graph.addEdge(Relationship('family', p1, p4))
 ```
 
-Here are some examples of how the Graph DB can be queried
-*Dagoba* uses chained querying along with lazy execution so each query operator operates on a query and returns another query object. 
-The results are evaluated upon calling **run()**
+Here are some examples of how the Graph DB can be queried   
+*Dagoba* uses chained querying along with lazy execution so each query operator operates on a query and returns another query object.
+The results of the query are evaluated upon calling **run()**
 
 ```python
 # Get all of Bob's connections
