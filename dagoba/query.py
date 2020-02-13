@@ -24,16 +24,10 @@ class Query():
         step = None
         state = None
         pipetype = None
-        print('Running pipetypes')
-        print(self.program)
 
-        cnt = 0
         while(done < last_step):
-            if cnt > 15:
-                print('Exiting')
-                exit()
-            cnt += 1
             step = self.program[pc]
+
             # Initialize state if needed
             try:
                 state = self.state[pc]
@@ -41,32 +35,31 @@ class Query():
                 for i in range(len(self.state), pc + 1):
                     self.state.append(State())
                 state = self.state[pc]
+
             pipetype = Core.getPipetype(step[0])
             maybe_gremlin = pipetype(self.graph, step[1], maybe_gremlin, state)
-            print('maybe_gremlin:', maybe_gremlin)
+
             if (maybe_gremlin == 'pull'):
                 maybe_gremlin = False
                 if pc - 1 > done:
-                    print('Go to prev pipe')
                     pc -= 1                 # Try pulling from the previous pipe
                     continue
                 else:
-                    print('This pipe is done')
                     done = pc               # This pipe is done as well
 
             if maybe_gremlin == 'done':
-                print('Done')
                 maybe_gremlin = False
                 done = pc
+
             pc += 1
             if pc > last_step:
-                print('Gremlin came out')
                 if maybe_gremlin:
                     results.append(maybe_gremlin)
                 maybe_gremlin = False
                 pc -= 1
 
-        return results
+        outp = [grem.result if grem.result is not None else grem.vertex for grem in results]
+        return outp
 
 
 class Core:
@@ -122,9 +115,8 @@ class Core:
         Defining various standard pipetypes
     '''
     def _vertex(graph, args: Args, gremlin: Gremlin, state: State):
-        if not state.vertices:
+        if state.vertices is None:
             state.vertices = graph.findVertices(args)
-            print('No vertices. Finding....')
 
         if len(state.vertices) == 0:
             return 'done'
@@ -133,7 +125,7 @@ class Core:
         if gremlin:
             return Gremlin(vertex, gremlin.state)
         else:
-            return Gremlin(vertex, State())
+            return Gremlin(vertex, None)
 
     def _out(graph, args: Args, gremlin, state):
         state_has_no_edges = state.edges is None or len(state.edges) == 0
@@ -142,14 +134,18 @@ class Core:
 
         if state_has_no_edges:
             state.gremlin = gremlin
-            state.edges = list(filter(Core.filterEdges(args.get(0)), graph.findOutEdges(gremlin.vertex)))
+            out_edges = graph.findOutEdges(gremlin.vertex)
+            state.edges = list(filter(Core.filterEdges(args.get(0)), out_edges))
 
         if len(state.edges) == 0:
             return 'pull'
 
-        # TODO: Check if below line is correct
-        vertex = state.edges.pop()._in
-        return Gremlin(vertex, gremlin.state)       # Return a Gremlin sitting on the vertex
+        vertex = state.edges.pop()._out
+
+        if gremlin:
+            return Gremlin(vertex, gremlin.state)       # Return a Gremlin sitting on the vertex
+        else:
+            return Gremlin(vertex, None)
 
     def _in(graph, args: Args, gremlin, state):
         state_has_no_edges = state.edges is None or len(state.edges) == 0
@@ -162,15 +158,15 @@ class Core:
 
         if len(state.edges) == 0:
             return 'pull'
-        # TODO: Check if below line is correct
-        vertex = state.edges.pop()._out
+
+        vertex = state.edges.pop()._in
         return Gremlin(vertex, gremlin.state)       # Return a Gremlin sitting on the vertex
 
     def _property(graph, args: Args, gremlin: Gremlin, state):
         if not gremlin:
             return 'pull'
         gremlin.result = gremlin.vertex.getProperty(args.get(0))
-        if gremlin.result:
+        if gremlin.result is not None:
             return gremlin
         else:
             return False
@@ -191,3 +187,4 @@ class Core:
 Core.addPipetype('vertex', Core._vertex)
 Core.addPipetype('in', Core._in)
 Core.addPipetype('out', Core._out)
+Core.addPipetype('property', Core._property)

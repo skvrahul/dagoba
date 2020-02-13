@@ -21,17 +21,23 @@ class Relationship(Edge):
 
 def main(args):
     graph = Graph()
-    p1 = Person('Rahul', 21)
-    p2 = Person('Tom', 25)
-    p3 = Person('Kate', 20)
-    graph.addVertex(p1)
-    graph.addVertex(p2)
-    graph.addVertex(p3)
+    rah = Person('Rahul', 21)
+    tom = Person('Tom', 25)
+    kat = Person('Kate', 20)
+    raj = Person('Raj', 25)
+    graph.addVertex(rah)
+    graph.addVertex(tom)
+    graph.addVertex(kat)
+    graph.addVertex(raj)
 
-    graph.addEdge(Relationship('Friends', p1, p2))
-    graph.addEdge(Relationship('Friends', p2, p3))
+    graph.addEdge(Relationship('Friends', rah, raj))
+    graph.addEdge(Relationship('Friends', raj, kat))
+    graph.addEdge(Relationship('Friends', rah, tom))
+    graph.addEdge(Relationship('Friends', tom, kat))
+    graph.addEdge(Relationship('Friends', tom, raj))
+    graph.addEdge(Relationship('Friends', tom, rah))
 
-    print(graph.v({'name': 'Rahul'}).out().run())
+    print(graph.v({'age': 25}).out().property('name').run())
 
 
 if __name__ == '__main__':

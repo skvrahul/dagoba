@@ -37,8 +37,8 @@ class Edge():
 class State:
 
     def __init__(self):
-        self.vertices = []
-        self.edges = []
+        self.vertices = None
+        self.edges = None
         self.gremlin = None
         self.num_taken = 0
 
@@ -89,4 +89,8 @@ class Gremlin:
         self.result = None
 
     def __repr__(self):
-        return '<Gremlin: vertex:%s, state:%s>' % (self.vertex, self.state)
+        s = '<Gremlin: vertex:%s, state:%s' % (self.vertex, self.state)
+        if self.result:
+            s += ', result:%s' % self.result
+        s += '>'
+        return s

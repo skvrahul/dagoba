@@ -65,8 +65,8 @@ class Graph():
         if not(edge._in and edge._out):
             # TODO: Create our own custom errors
             raise ValueError('Edge was not found')
-        edge._out._out.append(edge)
-        edge._in._in.append(edge)
+        edge._in._out.append(edge)
+        edge._out._in.append(edge)
         self.edges.append(edge)
 
     def findOutEdges(self, vertex):
