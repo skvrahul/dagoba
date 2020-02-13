@@ -1,7 +1,8 @@
 # dagoba
 A basic in memory Graph DB built using Python   
 
-This is a Python implementation of the Graph DB by the same name as illustrated in the book [500 Lines or Less](https://github.com/aosabook/500lines) (Originally built in JS)
+This is a **Python** implementation of the Graph DB by the same name as illustrated in the book [500 Lines or Less](https://aosabook.org) 
+(Originally built in JS by Dann Toliver - Copyright (c) Dann Toliver, 2015)
 
 ## Usage
 
