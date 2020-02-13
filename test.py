@@ -37,7 +37,7 @@ def main(args):
     graph.addEdge(Relationship('Friends', tom, raj))
     graph.addEdge(Relationship('Friends', tom, rah))
 
-    print(graph.v({'age': 25}).out().property('name').run())
+    print(graph.v({'age': 25}).out().property('name').take(2).run())
 
 
 if __name__ == '__main__':
