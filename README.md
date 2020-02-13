@@ -11,7 +11,6 @@ Below is a quick example
 
 ```python
 from dagoba.graph import Graph
-from dagoba.query import Query
 from dagoba.entities import Vertex, Edge
 
 
