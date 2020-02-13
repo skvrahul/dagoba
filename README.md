@@ -9,7 +9,7 @@ To add any object as a vertex to the graph ensure your object is a subclass of `
 
 Below is a quick example
 
-```
+```python
 from dagoba.graph import Graph
 from dagoba.query import Query
 from dagoba.entities import Vertex, Edge
@@ -30,9 +30,9 @@ class Relationship(Edge):
         self.name = name
 ```
 
-Below few lines higlight instantiation of the graph and adding vertices and edges to it..
+Below few lines highlight instantiation of the graph and adding vertices and edges to it..
 
-```
+```python
 graph = Graph()
 
 p1 = Person('Bob', 21)
@@ -51,7 +51,7 @@ Here is an example of how the Graph DB can be queried
 *Dagoba* uses chained querying along with lazy execution so each query operator operates on a query and returns another query object. 
 The results are evaluated upon calling **run()**
 
-```
+```python
 # Print all of Bob's connections
 print(graph.v({'name', 'Bob'}).out())
 ```
