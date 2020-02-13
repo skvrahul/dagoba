@@ -33,6 +33,12 @@ class Edge():
         self._in = src._id
         self._out = target._id
 
+    def matches(self, query: Dict):
+        for k, v in query.items():
+            if not(self.getProperty(k) == v):
+                return False
+        return True
+
 
 class State:
 
