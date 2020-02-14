@@ -183,9 +183,26 @@ class Core:
         state.num_taken += 1
         return gremlin
 
+    def _filter(graph, args: Args, gremlin, state):
+        if not gremlin:
+            return 'pull'
+
+        # Filter query is a property dictionary
+        if isinstance(args.get(0), dict):
+            return gremlin if gremlin.vertex.matches(args.get(0)) else 'pull'
+        # Filter query is a function or lambda
+        elif callable(args.get(0)):
+            filter_func = args.get(0)
+            return gremlin if filter_func(gremlin.vertex) else 'pull'
+        # Unsupported filter type
+        else:
+            Core.error("Unrecognized filter query:" + str(type(args.get(0))))
+            return gremlin
+
 
 Core.addPipetype('vertex', Core._vertex)
 Core.addPipetype('in', Core._in)
 Core.addPipetype('out', Core._out)
 Core.addPipetype('property', Core._property)
 Core.addPipetype('take', Core._take)
+Core.addPipetype('filter', Core._filter)
