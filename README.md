@@ -11,7 +11,6 @@ To add any object as a vertex to the graph ensure your object is a subclass of `
 Below is a quick example
 
 ```python
-from dagoba.graph import Graph
 from dagoba.entities import Vertex, Edge
 
 
@@ -33,6 +32,8 @@ class Relationship(Edge):
 Below few lines highlight instantiation of the graph and adding vertices and edges to it..
 
 ```python
+from dagoba.graph import Graph
+
 graph = Graph()
 
 p1 = Person('Bob', 21)
