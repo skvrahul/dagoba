@@ -48,7 +48,7 @@ class State:
         self.gremlin = None
         self.num_taken = 0
         self.vert_ids = set()   # Set of returned Vertexes(used for 'unique')
-        self.as_name = None     # Name assigned to the results(used for 'as')
+        self.alias = None     # Name assigned to the results(used for 'as')
 
     def __repr__(self):
         return '<state:{vertices:%s, edges: %s, gremlin: %s}>' % (self.vertices, self.edges, self.gremlin)
