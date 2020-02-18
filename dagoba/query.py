@@ -211,6 +211,15 @@ class Core:
             state.vert_ids.add(gremlin.vertex._id)
             return gremlin
 
+    def _as(graph, args: Args, gremlin, state):
+        if not gremlin:
+            # No gremlin. Try to get one
+            return 'pull'
+        if gremlin.state.alias is None:
+            gremlins.state.alias = {}
+        gremlin.state.alias[args.get(0)] = gremlin.vertex
+        return gremlin
+
 
 Core.addPipetype('vertex', Core._vertex)
 Core.addPipetype('in', Core._in)
@@ -219,3 +228,4 @@ Core.addPipetype('property', Core._property)
 Core.addPipetype('take', Core._take)
 Core.addPipetype('filter', Core._filter)
 Core.addPipetype('unique', Core._unique)
+Core.addPipetype('as', Core._as)
