@@ -47,6 +47,7 @@ class State:
         self.edges = None
         self.gremlin = None
         self.num_taken = 0
+        self.vert_ids = set() 
 
     def __repr__(self):
         return '<state:{vertices:%s, edges: %s, gremlin: %s}>' % (self.vertices, self.edges, self.gremlin)

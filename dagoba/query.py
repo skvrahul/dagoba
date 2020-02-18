@@ -199,6 +199,18 @@ class Core:
             Core.error("Unrecognized filter query:" + str(type(args.get(0))))
             return gremlin
 
+    def _unique(graph, args: Args, gremlin, state):
+        if not gremlin:
+            # No gremlin. Try to get one
+            return 'pull'
+        elif gremlin.vertex._id in state.vert_ids:
+            # Already returned this particular vertex
+            return 'pull'
+        else:
+            # Mark this gremlins vertex as returned
+            state.vert_ids.add(gremlin.vertex._id)
+            return gremlin
+
 
 Core.addPipetype('vertex', Core._vertex)
 Core.addPipetype('in', Core._in)
@@ -206,3 +218,4 @@ Core.addPipetype('out', Core._out)
 Core.addPipetype('property', Core._property)
 Core.addPipetype('take', Core._take)
 Core.addPipetype('filter', Core._filter)
+Core.addPipetype('unique', Core._unique)
